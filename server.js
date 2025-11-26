@@ -4,6 +4,11 @@ const mongoose = require('mongoose');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const sampleContacts = require('./data/sampleContacts');
+const sampleCompanies = require('./data/sampleCompanies');
+const Contact = require('./models/contact');
+const Company = require('./models/company');
+const contactRoutes = require('./routes/contactRoutes');
+const companyRoutes = require('./routes/companyRoutes');
 
 const app = express();
 
@@ -25,30 +30,33 @@ async function connectToDatabase() {
   }
 }
 
-// Define contact schema
-const contactSchema = new mongoose.Schema({
-  firstName: { type: String, required: true, trim: true },
-  lastName: { type: String, required: true, trim: true },
-  email: { 
-    type: String, 
-    required: true, 
-    trim: true, 
-    lowercase: true, 
-    unique: true, 
-    match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ 
-  },
-  favoriteColor: { type: String, required: true, trim: true },
-  birthday: { type: Date, required: true }
-}, { timestamps: true });
-
-const Contact = mongoose.model('Contact', contactSchema);
-
 // Seed sample data for first-time setups so the UI never looks empty
 async function ensureSeedData() {
   try {
-    const count = await Contact.estimatedDocumentCount();
-    if (count === 0) {
-      await Contact.insertMany(sampleContacts);
+    const companyCount = await Company.estimatedDocumentCount();
+    if (companyCount === 0) {
+      await Company.insertMany(sampleCompanies);
+      console.log(`🌱 Seeded ${sampleCompanies.length} companies`);
+    }
+
+    const contactCount = await Contact.estimatedDocumentCount();
+    if (contactCount === 0) {
+      const companies = await Company.find({});
+      const companyMap = companies.reduce((acc, company) => {
+        acc[company.name] = company._id;
+        return acc;
+      }, {});
+
+      const contactsWithCompany = sampleContacts.map(contact => {
+        const companyId = companyMap[contact.companyName];
+        if (!companyId) {
+          throw new Error(`Missing seed company for ${contact.companyName}`);
+        }
+        const { companyName, ...rest } = contact;
+        return { ...rest, company: companyId };
+      });
+
+      await Contact.insertMany(contactsWithCompany);
       console.log(`🌱 Seeded ${sampleContacts.length} contacts`);
     }
   } catch (err) {
@@ -69,9 +77,9 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Contacts API',
+      title: 'Contacts & Companies API',
       version: '1.0.0',
-      description: 'API for managing contacts stored in MongoDB',
+      description: 'Week 03 CRUD project with contacts + companies collections',
     },
     servers: [
       {
@@ -84,7 +92,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./server.js'],
+  apis: ['./server.js', './routes/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
@@ -94,320 +102,116 @@ app.use(express.json());
 app.set('json spaces', 2);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Root route: JSON output of contacts
-app.get('/', async (req, res) => {
-  try {
-    const contacts = await Contact.find().sort({ lastName: 1, firstName: 1 });
-    res.json(contacts);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
+// Root route: API status
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'Contacts & Companies API',
+    docs: '/api-docs',
+  });
 });
 
-/**
- * @swagger
- * /contacts:
- *   get:
- *     summary: Get all contacts
- *     tags: [Contacts]
- *     responses:
- *       200:
- *         description: List of all contacts
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Contact'
- *       500:
- *         description: Server error
- */
-app.get('/contacts', async (req, res) => {
-  try {
-    const contacts = await Contact.find().sort({ lastName: 1, firstName: 1 });
-    res.json(contacts);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-/**
- * @swagger
- * /contacts/{id}:
- *   get:
- *     summary: Get a contact by ID
- *     tags: [Contacts]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The contact ID
- *     responses:
- *       200:
- *         description: Contact found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Contact'
- *       404:
- *         description: Contact not found
- *       500:
- *         description: Server error
- */
-app.get('/contacts/:id', async (req, res) => {
-  try {
-    const contact = await Contact.findById(req.params.id);
-    if (!contact) {
-      return res.status(404).json({ error: 'Contact not found' });
-    }
-    res.json(contact);
-  } catch (err) {
-    console.error(err);
-    if (err.name === 'CastError') {
-      return res.status(404).json({ error: 'Contact not found' });
-    }
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-/**
- * @swagger
- * /contacts:
- *   post:
- *     summary: Create a new contact
- *     tags: [Contacts]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - firstName
- *               - lastName
- *               - email
- *               - favoriteColor
- *               - birthday
- *             properties:
- *               firstName:
- *                 type: string
- *                 example: Itai
- *               lastName:
- *                 type: string
- *                 example: Mambuva
- *               email:
- *                 type: string
- *                 format: email
- *                 example: mambuva@gmail.com
- *               favoriteColor:
- *                 type: string
- *                 example: blue
- *               birthday:
- *                 type: string
- *                 format: date
- *                 example: 1990-01-15
- *     responses:
- *       201:
- *         description: Contact created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 _id:
- *                   type: string
- *                   example: 507f1f77bcf86cd799439011
- *       400:
- *         description: Bad request - validation error
- *       500:
- *         description: Server error
- */
-app.post('/contacts', async (req, res) => {
-  try {
-    const { firstName, lastName, email, favoriteColor, birthday } = req.body;
-    
-    // Validate all required fields are present
-    if (!firstName || !lastName || !email || !favoriteColor || !birthday) {
-      return res.status(400).json({ 
-        error: 'All fields are required: firstName, lastName, email, favoriteColor, and birthday' 
-      });
-    }
-
-    const newContact = new Contact({
-      firstName,
-      lastName,
-      email,
-      favoriteColor,
-      birthday
-    });
-    
-    await newContact.save();
-    res.status(201).json({ _id: newContact._id });
-  } catch (err) {
-    console.error(err);
-    if (err.code === 11000) {
-      return res.status(400).json({ error: 'Email already exists' });
-    }
-    res.status(400).json({ error: err.message || 'Bad request' });
-  }
-});
-
-/**
- * @swagger
- * /contacts/{id}:
- *   put:
- *     summary: Update a contact by ID
- *     tags: [Contacts]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The contact ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               firstName:
- *                 type: string
- *                 example: Itai
- *               lastName:
- *                 type: string
- *                 example: Mambuva
- *               email:
- *                 type: string
- *                 format: email
- *                 example: mambuva@gmail.com
- *               favoriteColor:
- *                 type: string
- *                 example: blue
- *               birthday:
- *                 type: string
- *                 format: date
- *                 example: 1990-01-15
- *     responses:
- *       204:
- *         description: Contact updated successfully
- *       400:
- *         description: Bad request - validation error
- *       404:
- *         description: Contact not found
- *       500:
- *         description: Server error
- */
-app.put('/contacts/:id', async (req, res) => {
-  try {
-    const contact = await Contact.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
-    
-    if (!contact) {
-      return res.status(404).json({ error: 'Contact not found' });
-    }
-    
-    res.status(204).send();
-  } catch (err) {
-    console.error(err);
-    if (err.name === 'CastError') {
-      return res.status(404).json({ error: 'Contact not found' });
-    }
-    if (err.code === 11000) {
-      return res.status(400).json({ error: 'Email already exists' });
-    }
-    res.status(400).json({ error: err.message || 'Bad request' });
-  }
-});
-
-/**
- * @swagger
- * /contacts/{id}:
- *   delete:
- *     summary: Delete a contact by ID
- *     tags: [Contacts]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The contact ID
- *     responses:
- *       204:
- *         description: Contact deleted successfully
- *       404:
- *         description: Contact not found
- *       500:
- *         description: Server error
- */
-app.delete('/contacts/:id', async (req, res) => {
-  try {
-    const contact = await Contact.findByIdAndDelete(req.params.id);
-    
-    if (!contact) {
-      return res.status(404).json({ error: 'Contact not found' });
-    }
-    
-    res.status(204).send();
-  } catch (err) {
-    console.error(err);
-    if (err.name === 'CastError') {
-      return res.status(404).json({ error: 'Contact not found' });
-    }
-    res.status(500).json({ error: 'Server error' });
-  }
-});
+app.use('/contacts', contactRoutes);
+app.use('/companies', companyRoutes);
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     Contact:
+ *     ContactInput:
  *       type: object
  *       required:
  *         - firstName
  *         - lastName
  *         - email
+ *         - phone
  *         - favoriteColor
  *         - birthday
+ *         - jobTitle
+ *         - company
+ *         - street
+ *         - city
+ *         - country
  *       properties:
- *         _id:
- *           type: string
- *           description: The auto-generated ID of the contact
  *         firstName:
  *           type: string
- *           description: The contact's first name
  *         lastName:
  *           type: string
- *           description: The contact's last name
  *         email:
  *           type: string
  *           format: email
- *           description: The contact's email address
+ *         phone:
+ *           type: string
  *         favoriteColor:
  *           type: string
- *           description: The contact's favorite color
  *         birthday:
  *           type: string
  *           format: date
- *           description: The contact's birthday
- *         createdAt:
+ *         jobTitle:
  *           type: string
- *           format: date-time
- *           description: The date the contact was created
- *         updatedAt:
+ *         company:
  *           type: string
- *           format: date-time
- *           description: The date the contact was last updated
+ *           description: Company ObjectId
+ *         street:
+ *           type: string
+ *         city:
+ *           type: string
+ *         country:
+ *           type: string
+ *         notes:
+ *           type: string
+ *     Contact:
+ *       allOf:
+ *         - $ref: '#/components/schemas/ContactInput'
+ *         - type: object
+ *           properties:
+ *             _id:
+ *               type: string
+ *             createdAt:
+ *               type: string
+ *               format: date-time
+ *             updatedAt:
+ *               type: string
+ *               format: date-time
+ *     CompanyInput:
+ *       type: object
+ *       required:
+ *         - name
+ *         - industry
+ *         - supportEmail
+ *         - phone
+ *         - hqCity
+ *         - description
+ *       properties:
+ *         name:
+ *           type: string
+ *         industry:
+ *           type: string
+ *         website:
+ *           type: string
+ *           format: uri
+ *         supportEmail:
+ *           type: string
+ *           format: email
+ *         phone:
+ *           type: string
+ *         hqCity:
+ *           type: string
+ *         description:
+ *           type: string
+ *     Company:
+ *       allOf:
+ *         - $ref: '#/components/schemas/CompanyInput'
+ *         - type: object
+ *           properties:
+ *             _id:
+ *               type: string
+ *             createdAt:
+ *               type: string
+ *               format: date-time
+ *             updatedAt:
+ *               type: string
+ *               format: date-time
  */
 
 startServer();

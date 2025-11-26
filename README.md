@@ -1,89 +1,86 @@
-# Contacts API - Week 2 (Complete)
+# Contacts & Companies API (Week 03)
 
-A RESTful API for managing contacts stored in MongoDB. This is the complete two-week project. The API now auto-seeds demo contacts the first time it connects to an empty database so the UI never looks blank.
+Week 03 deliverable for the new CRUD project. The API now manages two MongoDB collections (`contacts` and `companies`), exposes fully documented CRUD routes, validates incoming data, and seeds demo data so the UI/tests never start empty.
 
-## Features
+## Feature Overview
 
-- ✅ GET all contacts
-- ✅ GET contact by ID
-- ✅ POST create new contact (all fields required, returns ID)
-- ✅ PUT update contact by ID
-- ✅ DELETE contact by ID
-- ✅ Swagger API documentation at `/api-docs`
-- ✅ MongoDB integration
-- ✅ Input validation
+- ✅ Two MongoDB collections with relationships (`contacts` reference `companies`)
+- ✅ Contact documents contain 11 validated fields (requirement ≥ 7 fields)
+- ✅ Fully functional CRUD routes for contacts and companies
+- ✅ Centralized controllers + modular routers
+- ✅ Swagger UI (`/api-docs`) covering every route & schema
+- ✅ Auto-seeding for local/dev setups
 
-## Setup
+## Getting Started
 
-1. Install dependencies:
+1. **Install dependencies**
    ```bash
    npm install
    ```
-
-2. Create a `.env` file in the root directory with your MongoDB connection string:
+2. **Environment variables**
+   Create `.env` (never commit it):
    ```
    MONGODB_URI=your_mongodb_connection_string_here
    PORT=3000
-   RENDER_URL=https://your-render-app.onrender.com (optional, for Swagger)
+   RENDER_URL=https://your-render-app.onrender.com # optional, used in Swagger
    ```
-
-3. Import sample data into MongoDB (optional – the server now auto-seeds if the collection is empty):
+3. **(Optional) manual import**
+   Auto-seeding runs on server start, but you can also run:
    ```bash
    node importData.js
    ```
-
-4. Start the server:
+4. **Start the API**
    ```bash
    npm start
    ```
-
-   Or for development with auto-reload:
+   or
    ```bash
    npm run dev
    ```
 
-## API Endpoints
+## API Surface
 
-- `GET /` - Get all contacts
-- `GET /contacts` - Get all contacts
-- `GET /contacts/:id` - Get a contact by ID
-- `POST /contacts` - Create a new contact (returns contact ID)
-- `PUT /contacts/:id` - Update a contact by ID
-- `DELETE /contacts/:id` - Delete a contact by ID
-- `GET /api-docs` - Swagger API documentation
+| Method | Route | Description |
+| -- | -- | -- |
+| GET | `/` | Health/status payload |
+| GET | `/contacts` | List contacts (populated with company info) |
+| GET | `/contacts/:id` | Get single contact |
+| POST | `/contacts` | Create contact (all fields validated) |
+| PUT | `/contacts/:id` | Update contact |
+| DELETE | `/contacts/:id` | Delete contact |
+| GET | `/companies` | List companies |
+| GET | `/companies/:id` | Get company |
+| POST | `/companies` | Create company |
+| PUT | `/companies/:id` | Update company |
+| DELETE | `/companies/:id` | Delete company |
+| GET | `/api-docs` | Interactive Swagger UI |
 
-## Contact Schema
+## Schemas
 
-All fields are required:
-- `firstName` (String)
-- `lastName` (String)
-- `email` (String, unique, validated)
-- `favoriteColor` (String)
-- `birthday` (Date)
+**Contact (11 required fields)**
+- `firstName`, `lastName`, `email`, `phone`, `favoriteColor`, `birthday`,
+  `jobTitle`, `company` (ObjectId), `street`, `city`, `country`
+- Optional: `notes`
 
-## API Documentation
+**Company**
+- `name`, `industry`, `supportEmail`, `phone`, `hqCity`, `description`
+- Optional: `website`
 
-Visit `http://localhost:3000/api-docs` (or your Render URL + `/api-docs`) to view the interactive Swagger documentation.
+## Documentation & Testing
 
-## Testing
+- Swagger UI: `http://localhost:3000/api-docs`
+- Sample REST Client calls: `contacts.rest`
+- Tests can be run via REST Client, Thunder Client, Postman, curl, etc.
 
-Use the `contacts.rest` file with REST Client extension in VS Code, or use Postman/Thunder Client.
+## Deployment Notes
 
-## Deployment to Render
+1. Push to GitHub and connect the repo to Render.
+2. Create a new Render Web Service.
+3. Add env vars (`MONGODB_URI`, `RENDER_URL` if desired). Render will set `PORT`.
+4. Deploy & verify `/api-docs` plus CRUD routes remotely.
 
-1. Push your code to GitHub
-2. Connect your GitHub repository to Render
-3. Create a new Web Service
-4. Set the following environment variables in Render:
-   - `MONGODB_URI` - Your MongoDB connection string
-   - `PORT` - Will be set automatically by Render
-   - `RENDER_URL` - Your Render app URL (optional, for Swagger)
-5. Deploy!
+## Week 04 Preview
 
-## Project Requirements Checklist
-
-- ✅ Database stores: firstName, lastName, email, favoriteColor, and birthday
-- ✅ Node project successfully connects to MongoDB
-- ✅ API routes perform GET, POST, PUT, and DELETE requests
-- ✅ API Documentation using Swagger is professional and comprehensive
-- ✅ API is published to Render and can be called from external sources
+- Add OAuth-based authentication/authorization
+- Harden security headers/middleware
+- Record walkthrough video (5–8 min) covering rubric items

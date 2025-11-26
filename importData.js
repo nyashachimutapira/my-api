@@ -9,6 +9,9 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const sampleContacts = require('./data/sampleContacts');
+const sampleCompanies = require('./data/sampleCompanies');
+const Contact = require('./models/contact');
+const Company = require('./models/company');
 
 const mongoURI = process.env.MONGODB_URI;
 
@@ -17,36 +20,37 @@ if (!mongoURI) {
   process.exit(1);
 }
 
-// Define contact schema (same as server.js)
-const contactSchema = new mongoose.Schema({
-  firstName: { type: String, required: true, trim: true },
-  lastName: { type: String, required: true, trim: true },
-  email: { 
-    type: String, 
-    required: true, 
-    trim: true, 
-    lowercase: true, 
-    unique: true, 
-    match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ 
-  },
-  favoriteColor: { type: String, required: true, trim: true },
-  birthday: { type: Date, required: true }
-}, { timestamps: true });
-
-const Contact = mongoose.model('Contact', contactSchema);
-
 async function importData() {
   try {
     // Connect to MongoDB
     await mongoose.connect(mongoURI);
     console.log('✅ Connected to MongoDB');
 
-    // Clear existing contacts (optional - remove if you want to keep existing data)
+    // Clear existing data
     await Contact.deleteMany({});
-    console.log('🗑️  Cleared existing contacts');
+    await Company.deleteMany({});
+    console.log('🗑️  Cleared existing contacts & companies');
 
-    // Insert sample contacts
-    const result = await Contact.insertMany(sampleContacts);
+    // Insert sample companies first
+    const companyDocs = await Company.insertMany(sampleCompanies);
+    console.log(`🏢 Inserted ${companyDocs.length} companies`);
+
+    const companyMap = companyDocs.reduce((acc, company) => {
+      acc[company.name] = company._id;
+      return acc;
+    }, {});
+
+    // Insert contacts referencing the new company ids
+    const contactPayload = sampleContacts.map(contact => {
+      const companyId = companyMap[contact.companyName];
+      if (!companyId) {
+        throw new Error(`Missing company seed for ${contact.companyName}`);
+      }
+      const { companyName, ...rest } = contact;
+      return { ...rest, company: companyId };
+    });
+
+    const result = await Contact.insertMany(contactPayload);
     console.log(`✅ Successfully imported ${result.length} contacts`);
 
     // Display imported contacts

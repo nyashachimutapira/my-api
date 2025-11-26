@@ -1,55 +1,87 @@
-### Contacts API Testing - Week 2 (All Routes)
-### Replace {{baseUrl}} with your actual API URL (e.g., http://localhost:3000 or your Render URL)
+### Contacts & Companies API Testing - Week 03
+### Replace {{baseUrl}} with your actual API URL (e.g., http://localhost:3000 or Render)
 
 @baseUrl = http://localhost:3000
+@companyId = replace-with-company-id
+@contactId = replace-with-contact-id
 
-### GET all contacts (root route)
+### API status
 GET {{baseUrl}}/
+
+### -------- Companies --------
+
+### GET companies
+GET {{baseUrl}}/companies
+
+### POST company
+POST {{baseUrl}}/companies
+Content-Type: application/json
+
+{
+  "name": "Sample Co",
+  "industry": "Software",
+  "website": "https://sample.co",
+  "supportEmail": "support@sample.co",
+  "phone": "+1 (555) 123-4567",
+  "hqCity": "Harare",
+  "description": "Example company created via REST Client."
+}
+
+### UPDATE company (replace :id)
+PUT {{baseUrl}}/companies/{{companyId}}
+Content-Type: application/json
+
+{
+  "name": "Sample Co Updated",
+  "industry": "Software",
+  "supportEmail": "support@sample.co",
+  "phone": "+1 (555) 123-4567",
+  "hqCity": "Harare",
+  "description": "Updated description."
+}
+
+### DELETE company (replace :id)
+DELETE {{baseUrl}}/companies/{{companyId}}
+
+### -------- Contacts --------
 
 ### GET all contacts
 GET {{baseUrl}}/contacts
 
 ### GET contact by ID (replace with actual ID from GET all response)
-GET {{baseUrl}}/contacts/507f1f77bcf86cd799439011
+GET {{baseUrl}}/contacts/{{contactId}}
 
 ### POST - Create a new contact
 POST {{baseUrl}}/contacts
 Content-Type: application/json
 
 {
-  "firstName": "Itai",
-  "lastName": "Mambuva",
-  "email": "mambuva@gmail.com",
-  "favoriteColor": "blue",
-  "birthday": "1990-01-15"
-}
-
-### POST - Create another contact for testing
-POST {{baseUrl}}/contacts
-Content-Type: application/json
-
-{
-  "firstName": "John",
-  "lastName": "Nhengeni",
-  "email": "johnhengeni@gmail.com",
-  "favoriteColor": "green",
-  "birthday": "1985-05-20"
+  "firstName": "Zara",
+  "lastName": "Nyathi",
+  "email": "zara@example.com",
+  "phone": "+263 770 123 456",
+  "favoriteColor": "teal",
+  "birthday": "1994-03-14",
+  "jobTitle": "Product Manager",
+  "company": "{{companyId}}",
+  "street": "123 City Center",
+  "city": "Bulawayo",
+  "country": "Zimbabwe",
+  "notes": "Created from REST Client"
 }
 
 ### PUT - Update a contact (replace ID with actual contact ID)
-PUT {{baseUrl}}/contacts/507f1f77bcf86cd799439011
+PUT {{baseUrl}}/contacts/{{contactId}}
 Content-Type: application/json
 
 {
-  "firstName": "Teresa",
-  "lastName": "Goni",
-  "email": "goni@gmail.com",
-  "favoriteColor": "red",
-  "birthday": "1990-01-15"
+  "favoriteColor": "purple",
+  "jobTitle": "Director of Ops",
+  "notes": "Updated via REST Client"
 }
 
 ### DELETE - Delete a contact (replace ID with actual contact ID)
-DELETE {{baseUrl}}/contacts/507f1f77bcf86cd799439011
+DELETE {{baseUrl}}/contacts/{{contactId}}
 
 ### Test POST with missing required field (should return 400)
 POST {{baseUrl}}/contacts
@@ -59,7 +91,7 @@ Content-Type: application/json
   "firstName": "Test",
   "lastName": "User",
   "email": "test@example.com"
-  // Missing favoriteColor and birthday
+  // Missing many required fields
 }
 
 ### Test GET with invalid ID (should return 404)
@@ -73,8 +105,14 @@ Content-Type: application/json
   "firstName": "Test",
   "lastName": "User",
   "email": "test@example.com",
+  "phone": "+263 700 000 000",
   "favoriteColor": "blue",
-  "birthday": "2000-01-01"
+  "birthday": "2000-01-01",
+  "jobTitle": "Intern",
+  "company": "{{companyId}}",
+  "street": "1 Test St",
+  "city": "Harare",
+  "country": "Zimbabwe"
 }
 
 ### Test DELETE with invalid ID (should return 404)

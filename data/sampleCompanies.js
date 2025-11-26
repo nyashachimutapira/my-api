@@ -1,0 +1,48 @@
+module.exports = [
+  {
+    name: 'Butau Logistics',
+    industry: 'Logistics',
+    website: 'https://www.butau-logistics.com',
+    supportEmail: 'support@butau-logistics.com',
+    phone: '+1 (555) 111-2222',
+    hqCity: 'Harare',
+    description: 'Regional logistics partner specializing in cross-border freight.',
+  },
+  {
+    name: 'Goni Studios',
+    industry: 'Design',
+    website: 'https://www.goni-studios.com',
+    supportEmail: 'hello@goni-studios.com',
+    phone: '+1 (555) 333-4444',
+    hqCity: 'Bulawayo',
+    description: 'Boutique design agency delivering branding and product design.',
+  },
+  {
+    name: 'Mugoti Analytics',
+    industry: 'Data Analytics',
+    website: 'https://www.mugoti-analytics.com',
+    supportEmail: 'contact@mugoti-analytics.com',
+    phone: '+1 (555) 555-6666',
+    hqCity: 'Mutare',
+    description: 'Data analytics consultancy helping teams make informed decisions.',
+  },
+  {
+    name: 'Nhengeni Labs',
+    industry: 'Software',
+    website: 'https://www.nhengeni-labs.dev',
+    supportEmail: 'team@nhengeni-labs.dev',
+    phone: '+1 (555) 777-8888',
+    hqCity: 'Gweru',
+    description: 'Custom software studio building modern web and mobile apps.',
+  },
+  {
+    name: 'Mambuva Ventures',
+    industry: 'Venture Capital',
+    website: 'https://www.mambuva.vc',
+    supportEmail: 'info@mambuva.vc',
+    phone: '+1 (555) 999-0000',
+    hqCity: 'Victoria Falls',
+    description: 'Investment firm backing ambitious founders across Africa.',
+  },
+];
+
