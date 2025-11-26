@@ -1,0 +1,34 @@
+{
+  "name": "my-api",
+  "version": "1.0.0",
+  "description": "Contacts API for managing contacts stored in MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nyashachimutapira/my-api.git"
+  },
+  "keywords": ["contacts", "api", "mongodb", "express"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nyashachimutapira/my-api/issues"
+  },
+  "homepage": "https://github.com/nyashachimutapira/my-api#readme",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mongoose": "^8.20.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
+

@@ -1,0 +1,81 @@
+### Contacts API Testing - Week 2 (All Routes)
+### Replace {{baseUrl}} with your actual API URL (e.g., http://localhost:3000 or your Render URL)
+
+@baseUrl = http://localhost:3000
+
+### GET all contacts (root route)
+GET {{baseUrl}}/
+
+### GET all contacts
+GET {{baseUrl}}/contacts
+
+### GET contact by ID (replace with actual ID from GET all response)
+GET {{baseUrl}}/contacts/507f1f77bcf86cd799439011
+
+### POST - Create a new contact
+POST {{baseUrl}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Itai",
+  "lastName": "Mambuva",
+  "email": "mambuva@gmail.com",
+  "favoriteColor": "blue",
+  "birthday": "1990-01-15"
+}
+
+### POST - Create another contact for testing
+POST {{baseUrl}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Nhengeni",
+  "email": "johnhengeni@gmail.com",
+  "favoriteColor": "green",
+  "birthday": "1985-05-20"
+}
+
+### PUT - Update a contact (replace ID with actual contact ID)
+PUT {{baseUrl}}/contacts/507f1f77bcf86cd799439011
+Content-Type: application/json
+
+{
+  "firstName": "Teresa",
+  "lastName": "Goni",
+  "email": "goni@gmail.com",
+  "favoriteColor": "red",
+  "birthday": "1990-01-15"
+}
+
+### DELETE - Delete a contact (replace ID with actual contact ID)
+DELETE {{baseUrl}}/contacts/507f1f77bcf86cd799439011
+
+### Test POST with missing required field (should return 400)
+POST {{baseUrl}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Test",
+  "lastName": "User",
+  "email": "test@example.com"
+  // Missing favoriteColor and birthday
+}
+
+### Test GET with invalid ID (should return 404)
+GET {{baseUrl}}/contacts/invalid-id-123
+
+### Test PUT with invalid ID (should return 404)
+PUT {{baseUrl}}/contacts/invalid-id-123
+Content-Type: application/json
+
+{
+  "firstName": "Test",
+  "lastName": "User",
+  "email": "test@example.com",
+  "favoriteColor": "blue",
+  "birthday": "2000-01-01"
+}
+
+### Test DELETE with invalid ID (should return 404)
+DELETE {{baseUrl}}/contacts/invalid-id-123
