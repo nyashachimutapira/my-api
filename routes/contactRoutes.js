@@ -6,6 +6,7 @@ const {
   updateContact,
   deleteContact,
 } = require('../controllers/contactController');
+const requireAuth = require('../middleware/requireAuth');
 
 const router = express.Router();
 
@@ -56,6 +57,8 @@ router.get('/:id', getContactById);
  *   post:
  *     summary: Create a new contact
  *     tags: [Contacts]
+ *     security:
+ *       - SessionAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -68,7 +71,7 @@ router.get('/:id', getContactById);
  *       400:
  *         description: Validation error
  */
-router.post('/', createContact);
+router.post('/', requireAuth, createContact);
 
 /**
  * @swagger
@@ -76,6 +79,8 @@ router.post('/', createContact);
  *   put:
  *     summary: Update a contact
  *     tags: [Contacts]
+ *     security:
+ *       - SessionAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -94,7 +99,7 @@ router.post('/', createContact);
  *       404:
  *         description: Contact not found
  */
-router.put('/:id', updateContact);
+router.put('/:id', requireAuth, updateContact);
 
 /**
  * @swagger
@@ -102,6 +107,8 @@ router.put('/:id', updateContact);
  *   delete:
  *     summary: Delete a contact
  *     tags: [Contacts]
+ *     security:
+ *       - SessionAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -114,7 +121,7 @@ router.put('/:id', updateContact);
  *       404:
  *         description: Contact not found
  */
-router.delete('/:id', deleteContact);
+router.delete('/:id', requireAuth, deleteContact);
 
 module.exports = router;
 

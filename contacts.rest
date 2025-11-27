@@ -8,6 +8,16 @@
 ### API status
 GET {{baseUrl}}/
 
+### -------- Auth --------
+### NOTE: Run GET {{baseUrl}}/auth/github in a browser to complete GitHub OAuth.
+### Once logged in, copy the session cookie (connect.sid) into REST Client.
+
+### Current auth state
+GET {{baseUrl}}/auth/me
+
+### Logout (requires cookie)
+POST {{baseUrl}}/auth/logout
+
 ### -------- Companies --------
 
 ### GET companies

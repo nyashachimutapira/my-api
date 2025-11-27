@@ -6,6 +6,7 @@ const {
   updateCompany,
   deleteCompany,
 } = require('../controllers/companyController');
+const requireAuth = require('../middleware/requireAuth');
 
 const router = express.Router();
 
@@ -56,6 +57,8 @@ router.get('/:id', getCompanyById);
  *   post:
  *     summary: Create a company
  *     tags: [Companies]
+ *     security:
+ *       - SessionAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -68,7 +71,7 @@ router.get('/:id', getCompanyById);
  *       400:
  *         description: Validation error
  */
-router.post('/', createCompany);
+router.post('/', requireAuth, createCompany);
 
 /**
  * @swagger
@@ -76,6 +79,8 @@ router.post('/', createCompany);
  *   put:
  *     summary: Update a company
  *     tags: [Companies]
+ *     security:
+ *       - SessionAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -94,7 +99,7 @@ router.post('/', createCompany);
  *       404:
  *         description: Company not found
  */
-router.put('/:id', updateCompany);
+router.put('/:id', requireAuth, updateCompany);
 
 /**
  * @swagger
@@ -102,6 +107,8 @@ router.put('/:id', updateCompany);
  *   delete:
  *     summary: Delete a company
  *     tags: [Companies]
+ *     security:
+ *       - SessionAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -114,7 +121,7 @@ router.put('/:id', updateCompany);
  *       404:
  *         description: Company not found
  */
-router.delete('/:id', deleteCompany);
+router.delete('/:id', requireAuth, deleteCompany);
 
 module.exports = router;
 

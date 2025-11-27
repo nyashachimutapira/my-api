@@ -9,6 +9,10 @@ const Contact = require('./models/contact');
 const Company = require('./models/company');
 const contactRoutes = require('./routes/contactRoutes');
 const companyRoutes = require('./routes/companyRoutes');
+const passport = require('passport');
+const session = require('express-session');
+const GitHubStrategy = require('passport-github2').Strategy;
+const cors = require('cors');
 
 const app = express();
 
@@ -29,6 +33,22 @@ async function connectToDatabase() {
     process.exit(1);
   }
 }
+passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: process.env.callbackURL_URL
+  },
+  function(accessToken, refreshToken, profile, done) {
+    //User.findOrCreate({ githubId: profile.id }, function (err, user) {
+    return done(null, profile);
+  }
+));
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
 
 // Seed sample data for first-time setups so the UI never looks empty
 async function ensureSeedData() {
