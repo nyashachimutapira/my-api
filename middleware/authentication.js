@@ -1,9 +1,6 @@
-
-const isAuthenticated = (req, res, next) => {
-    return res.status(401).json('You do not have access');
-
-next();
+module.exports = function authentication(req, res, next) {
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    return next();
+  }
+  return res.status(401).json({ error: 'Authentication required' });
 };
-module.exports = {
-     isAuthenticated
-    };
