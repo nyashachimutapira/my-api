@@ -1,5 +1,6 @@
 const Contact = require('../models/contact');
 const Company = require('../models/company');
+const mongoose = require('mongoose');
 
 const REQUIRED_FIELDS = [
   'firstName',
@@ -48,6 +49,9 @@ exports.getContacts = async (req, res) => {
 
 exports.getContactById = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ error: 'Contact not found' });
+    }
     const contact = await Contact.findById(req.params.id).populate('company');
     if (!contact) {
       return res.status(404).json({ error: 'Contact not found' });
@@ -81,6 +85,9 @@ exports.createContact = async (req, res) => {
 
 exports.updateContact = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ error: 'Contact not found' });
+    }
     if (req.body.company) {
       await ensureCompany(req.body.company);
     }
@@ -111,6 +118,9 @@ exports.updateContact = async (req, res) => {
 
 exports.deleteContact = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ error: 'Contact not found' });
+    }
     const contact = await Contact.findByIdAndDelete(req.params.id);
     if (!contact) {
       return res.status(404).json({ error: 'Contact not found' });

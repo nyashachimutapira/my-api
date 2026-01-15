@@ -1,0 +1,90 @@
+CONTACTS API - W02 PROJECT DEMONSTRATION SCRIPT
+(5-8 minutes)
+
+---
+
+[INTRO - 30 seconds]
+
+Hello, I'm [Your Name]. Today I'm demonstrating the Contacts API project, a Node.js REST API that manages contacts and companies using MongoDB. This API has been deployed to Render and includes complete Swagger documentation with POST, PUT, and DELETE functionality. I'll walk through each endpoint, test them with real data, and show you the database being updated in real-time.
+
+---
+
+[SWAGGER SETUP - 1 minute]
+
+Let me start by navigating to the Swagger documentation at our Render URL. [Show browser opening the /api-docs endpoint]. Here we can see the professional Swagger UI with all five endpoints: GET all contacts, GET contact by ID, POST to create a new contact, PUT to update a contact, and DELETE to remove a contact.
+
+On the right side, you'll notice the GitHub OAuth security scheme, which is required for creating, updating, and deleting contacts. The schemas show all required fields: firstName, lastName, email, phone, favoriteColor, birthday, jobTitle, company, street, city, and country.
+
+---
+
+[GET ALL CONTACTS - 1 minute]
+
+Let's start by testing the GET all contacts endpoint. I'll click on the GET /contacts route and hit Execute. [Show the request being sent]. Notice the response returns all contacts sorted by last name, then first name. Each contact includes their populated company information with the company name and ID. This demonstrates that our Mongoose population is working correctly and our database contains the seeded sample data.
+
+---
+
+[GET BY ID - 45 seconds]
+
+Next, let me test the GET by ID endpoint. I'll click on GET /contacts/{id} and paste a valid contact ID from the previous response into the parameter field. [Show entering the ID and executing]. The endpoint successfully retrieves a single contact with all their associated information. If I were to enter an invalid ID, it would return a 404 error as documented.
+
+---
+
+[POST - CREATE CONTACT - 1.5 minutes]
+
+Now let's create a new contact using the POST endpoint. [Click on POST /contacts]. I need to provide all required fields in the request body. [Show filling in the form]:
+- First Name: Tinashe
+- Last Name: Nhamo
+- Email: tinashe.nhamo@techmail.com
+- Phone: +263 771 234 567
+- Favorite Color: Blue
+- Birthday: 1992-06-15
+- Job Title: Senior Developer
+- Company: [paste valid company ID from earlier]
+- Street: 42 Innovation Drive
+- City: Harare
+- Country: Zimbabwe
+
+[Click Execute]. The API returns status 201 Created with the new contact's ID. This confirms the contact was successfully saved to MongoDB. Let me verify by going back to the GET all contacts endpoint and executing it again. [Show in the response list] You can see our new contact "Tinashe Nhamo" is now at the top of the sorted list.
+
+---
+
+[PUT - UPDATE CONTACT - 1.5 minutes]
+
+Next, let's update that contact using the PUT endpoint. [Click on PUT /contacts/{id}]. I'll enter the ID of the contact we just created. For the request body, I'll update some fields:
+- Job Title: Lead Developer
+- Favorite Color: Purple
+- Phone: +263 774 999 888
+
+[Show the JSON in the request body]. Notice I don't need to provide all fields—only the ones I want to change. [Click Execute]. The API returns status 204 No Content, indicating the update was successful. Let me verify by using the GET by ID endpoint again. [Navigate to GET by ID, enter the same contact ID, and execute]. You can see the job title is now "Lead Developer" and the favorite color changed to "Purple". The update worked correctly.
+
+---
+
+[DELETE - REMOVE CONTACT - 1 minute]
+
+Finally, let's test the DELETE endpoint. [Click on DELETE /contacts/{id}]. I'll enter the ID of a contact we want to remove. [Click Execute]. The API returns status 204 No Content, indicating successful deletion. To verify the deletion, let me call the GET by ID endpoint with that same ID. [Execute GET by ID with the deleted contact's ID]. Now it returns a 404 error with "Contact not found", confirming the contact has been removed from the database.
+
+---
+
+[DATABASE VERIFICATION - 45 seconds]
+
+All these operations are persisted in MongoDB. The seeding process ensures our database starts with sample data, and every create, update, and delete operation is immediately reflected in the database. The timestamps on each contact record show when they were created or last modified.
+
+---
+
+[SUMMARY - 30 seconds]
+
+In summary, this API successfully demonstrates:
+- GET requests for retrieving all contacts and individual contacts
+- POST request for creating new contacts with 201 status and ID response
+- PUT request for updating contacts with validation
+- DELETE request for removing contacts
+- Professional Swagger documentation with complete request/response schemas
+- MongoDB integration with proper data persistence
+- GitHub OAuth authentication for write operations
+- All endpoints functioning correctly on the Render deployment
+
+The API is production-ready and can be integrated with any frontend application. Thank you for watching.
+
+---
+
+END OF SCRIPT
