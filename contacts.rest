@@ -2,8 +2,8 @@
 ### Replace {{baseUrl}} with your actual API URL (e.g., http://localhost:3000 or Render)
 
 @baseUrl = http://localhost:3000
-@companyId = replace-with-company-id
-@contactId = replace-with-contact-id
+@companyId = 69690039571fe2292cb17ccc
+@contactId = 69690289571fe2292cb17ccf
 
 ### API status
 GET {{baseUrl}}/
