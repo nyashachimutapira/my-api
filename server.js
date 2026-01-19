@@ -9,6 +9,7 @@ const Contact = require('./models/contact');
 const Company = require('./models/company');
 const contactRoutes = require('./routes/contactRoutes');
 const companyRoutes = require('./routes/companyRoutes');
+const authRoutes = require('./routes/authRoutes');
 const passport = require('passport');
 const session = require('express-session');
 const GitHubStrategy = require('passport-github2').Strategy;
@@ -117,6 +118,7 @@ app.get('/', (req, res) => {
 });
 
 // ============ API Routes ============
+app.use('/auth', authRoutes);
 app.use('/contacts', contactRoutes);
 app.use('/companies', companyRoutes);
 

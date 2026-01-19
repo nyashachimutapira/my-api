@@ -3,7 +3,7 @@
 
 @baseUrl = http://localhost:3000
 @companyId = 69690039571fe2292cb17ccc
-@contactId = 69690289571fe2292cb17ccf
+@contactId = 696b9e197bb4e36f062b5e02
 
 ### API status
 GET {{baseUrl}}/
