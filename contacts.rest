@@ -1,129 +1,48 @@
-### Contacts & Companies API Testing - Week 03
-### Replace {{baseUrl}} with your actual API URL (e.g., http://localhost:3000 or Render)
+### Contacts & Companies API Testing - Week 03 - FINAL
 
 @baseUrl = http://localhost:3000
 @companyId = 69690039571fe2292cb17ccc
-@contactId = 696b9e197bb4e36f062b5e02
+@contactId = 696e0d95be412440a4c9ee73
 
-### API status
-GET {{baseUrl}}/
-
-### -------- Auth --------
-### NOTE: Run GET {{baseUrl}}/auth/github in a browser to complete GitHub OAuth.
-### Once logged in, copy the session cookie (connect.sid) into REST Client.
-
-### Current auth state
-GET {{baseUrl}}/auth/me
-
-### Logout (requires cookie)
-POST {{baseUrl}}/auth/logout
-
-### -------- Companies --------
-
-### GET companies
-GET {{baseUrl}}/companies
-
-### POST company
-POST {{baseUrl}}/companies
-Content-Type: application/json
-
-{
-  "name": "Sample Co",
-  "industry": "Software",
-  "website": "https://sample.co",
-  "supportEmail": "support@sample.co",
-  "phone": "+1 (555) 123-4567",
-  "hqCity": "Harare",
-  "description": "Example company created via REST Client."
-}
-
-### UPDATE company (replace :id)
-PUT {{baseUrl}}/companies/{{companyId}}
-Content-Type: application/json
-
-{
-  "name": "Sample Co Updated",
-  "industry": "Software",
-  "supportEmail": "support@sample.co",
-  "phone": "+1 (555) 123-4567",
-  "hqCity": "Harare",
-  "description": "Updated description."
-}
-
-### DELETE company (replace :id)
-DELETE {{baseUrl}}/companies/{{companyId}}
-
-### -------- Contacts --------
-
-### GET all contacts
+###
+### 1. GET all contacts
 GET {{baseUrl}}/contacts
 
-### GET contact by ID (replace with actual ID from GET all response)
-GET {{baseUrl}}/contacts/{{contactId}}
-
-### POST - Create a new contact
-POST {{baseUrl}}/contacts
-Content-Type: application/json
-
-{
-  "firstName": "Zara",
-  "lastName": "Nyathi",
-  "email": "zara@example.com",
-  "phone": "+263 770 123 456",
-  "favoriteColor": "teal",
-  "birthday": "1994-03-14",
-  "jobTitle": "Product Manager",
-  "company": "{{companyId}}",
-  "street": "123 City Center",
-  "city": "Bulawayo",
-  "country": "Zimbabwe",
-  "notes": "Created from REST Client"
-}
-
-### PUT - Update a contact (replace ID with actual contact ID)
+###
+### 2. UPDATE an existing contact
 PUT {{baseUrl}}/contacts/{{contactId}}
 Content-Type: application/json
 
 {
-  "favoriteColor": "purple",
-  "jobTitle": "Director of Ops",
-  "notes": "Updated via REST Client"
+  "firstName": "Tendai",
+  "lastName": "Mwale",
+  "email": "tendai.mwale.updated@example.com",
+  "phone": "+263 777 234 567",
+  "favoriteColor": "green",
+  "birthday": "1995-07-15",
+  "jobTitle": "Senior Developer",
+  "company": "{{companyId}}",
+  "street": "456 Samora Machel Avenue",
+  "city": "Harare",
+  "country": "Zimbabwe",
+  "notes": "Updated demo contact"
 }
 
-### DELETE - Delete a contact (replace ID with actual contact ID)
+###
+### 3. DELETE the contact
 DELETE {{baseUrl}}/contacts/{{contactId}}
 
-### Test POST with missing required field (should return 400)
+###
+### Test 1: Missing required fields (should return 400)
 POST {{baseUrl}}/contacts
 Content-Type: application/json
 
 {
-  "firstName": "Test",
-  "lastName": "User",
-  "email": "test@example.com"
-  // Missing many required fields
+  "firstName": "Chipo",
+  "lastName": "Banda",
+  "email": "chipo.banda@example.com"
 }
 
-### Test GET with invalid ID (should return 404)
-GET {{baseUrl}}/contacts/invalid-id-123
-
-### Test PUT with invalid ID (should return 404)
-PUT {{baseUrl}}/contacts/invalid-id-123
-Content-Type: application/json
-
-{
-  "firstName": "Test",
-  "lastName": "User",
-  "email": "test@example.com",
-  "phone": "+263 700 000 000",
-  "favoriteColor": "blue",
-  "birthday": "2000-01-01",
-  "jobTitle": "Intern",
-  "company": "{{companyId}}",
-  "street": "1 Test St",
-  "city": "Harare",
-  "country": "Zimbabwe"
-}
-
-### Test DELETE with invalid ID (should return 404)
-DELETE {{baseUrl}}/contacts/invalid-id-123
+###
+### Test 2: Invalid contact ID (should return 404)
+GET {{baseUrl}}/contacts/invalid-id-12345
