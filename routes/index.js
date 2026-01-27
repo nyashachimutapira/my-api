@@ -1,16 +1,8 @@
 const router = require('express').Router();
 
-router.use("/", require("./swagger"));
-router.use("/courses", require("./courses"));
-router.use("/Instructions", require("./Instructions"));
-
-router.get('login', passport.authenticate('github'), (req, res) => {})
-
-router.get('/logout', function(req, res){
-    req.logout(function(err) {
-        if (err) { return next(err); }
-        res.redirect('/');
-        });
-});
+// API routes
+router.use('/contacts', require('./contactRoutes'));
+router.use('/companies', require('./companyRoutes'));
+router.use('/auth', require('./authRoutes'));
 
 module.exports = router;
