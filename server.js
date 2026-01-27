@@ -21,6 +21,11 @@ app.use((req, res, next) => {
 // Setup Swagger API documentation
 setupSwaggerDocs(app);
 
+// Root endpoint - redirect to API docs
+app.get('/', (req, res) => {
+  res.redirect('/api-docs');
+});
+
 app.use('/', require('./routes'));
     
 
