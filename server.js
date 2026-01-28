@@ -102,6 +102,7 @@ const contactsHtml = `
     <body>
       <header>
         <h1>📋 All Contacts</h1>
+        <div id="authStatus" style="text-align: right; padding: 10px 20px; font-size: 14px;"></div>
       </header>
       <div class="container">
         <div class="nav">
