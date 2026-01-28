@@ -133,6 +133,19 @@ const contactsHtml = `
           });
         }
 
+        // Check authentication status
+        fetch('/auth/status')
+          .then(r => r.json())
+          .then(data => {
+            const authStatus = document.getElementById('authStatus');
+            if (data.authenticated) {
+              authStatus.innerHTML = 'Logged in as <strong>' + data.user.displayName + '</strong> | <a href="/logout" style="color: #3498db; text-decoration: none;">Logout</a>';
+            } else {
+              authStatus.innerHTML = '<a href="/auth/github" style="color: #3498db; text-decoration: none;">Login with GitHub</a>';
+            }
+          })
+          .catch(err => console.error('Auth status check failed:', err));
+
         fetch('/contacts')
           .then(r => r.json())
           .then(data => {
