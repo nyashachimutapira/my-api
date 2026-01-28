@@ -1,15 +1,91 @@
-### Contacts & Companies API Testing - Week 03 - FINAL
+### Contacts & Companies API Testing - Week 03 - CRUD Operations Demo
 
 @baseUrl = http://localhost:3000
-@companyId = 69690039571fe2292cb17ccc
-@contactId = 696e0d95be412440a4c9ee73
+@companyId = 6979ea6a08fc06c5c018af78
+@contactId = 6979e54530e0b469f9e3c0f1
 
 ###
-### 1. GET all contacts
+### TEST 1: GET all contacts (should return 200)
 GET {{baseUrl}}/contacts
 
 ###
-### 2. UPDATE an existing contact
+### TEST 2: GET specific contact by ID (should return 200)
+GET {{baseUrl}}/contacts/{{contactId}}
+
+###
+### TEST 3: GET all companies (should return 200)
+GET {{baseUrl}}/companies
+
+###
+### TEST 4: GET specific company by ID (should return 200)
+GET {{baseUrl}}/companies/{{companyId}}
+
+###
+### TEST 5: CREATE new contact with all required fields (should return 201)
+POST {{baseUrl}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Blessing",
+  "lastName": "Nyasha",
+  "email": "blessing.nyasha@example.com",
+  "phone": "+263 771 234 567",
+  "favoriteColor": "blue",
+  "birthday": "1998-03-20",
+  "jobTitle": "Software Engineer",
+  "company": "{{companyId}}",
+  "street": "123 Main Street",
+  "city": "Harare",
+  "country": "Zimbabwe"
+}
+
+###
+### TEST 6: CREATE new company with all required fields (should return 201)
+POST {{baseUrl}}/companies
+Content-Type: application/json
+
+{
+  "name": "TechCorp Zimbabwe",
+  "industry": "Information Technology",
+  "website": "https://techcorp.com",
+  "supportEmail": "support@techcorp.com",
+  "phone": "+263 242 123 456",
+  "hqCity": "Harare",
+  "description": "Leading technology solutions provider in Zimbabwe"
+}
+
+###
+### TEST 7: VALIDATION FAILED - POST contact with missing required fields (should return 400)
+POST {{baseUrl}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Chipo",
+  "lastName": "Banda",
+  "email": "chipo.banda@example.com"
+}
+
+###
+### TEST 8: VALIDATION FAILED - POST contact with invalid email format (should return 400)
+POST {{baseUrl}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Test",
+  "lastName": "User",
+  "email": "invalid-email",
+  "phone": "+263 777 234 567",
+  "favoriteColor": "red",
+  "birthday": "2000-01-01",
+  "jobTitle": "Manager",
+  "company": "{{companyId}}",
+  "street": "Street",
+  "city": "City",
+  "country": "Country"
+}
+
+###
+### TEST 9: UPDATE contact with valid data (should return 204)
 PUT {{baseUrl}}/contacts/{{contactId}}
 Content-Type: application/json
 
@@ -24,25 +100,31 @@ Content-Type: application/json
   "company": "{{companyId}}",
   "street": "456 Samora Machel Avenue",
   "city": "Harare",
-  "country": "Zimbabwe",
-  "notes": "Updated demo contact"
+  "country": "Zimbabwe"
 }
 
 ###
-### 3. DELETE the contact
-DELETE {{baseUrl}}/contacts/{{contactId}}
-
-###
-### Test 1: Missing required fields (should return 400)
-POST {{baseUrl}}/contacts
+### TEST 10: VALIDATION FAILED - PUT contact with missing required fields (should return 400)
+PUT {{baseUrl}}/contacts/{{contactId}}
 Content-Type: application/json
 
 {
-  "firstName": "Chipo",
-  "lastName": "Banda",
-  "email": "chipo.banda@example.com"
+  "firstName": "John",
+  "lastName": "Doe"
 }
 
 ###
-### Test 2: Invalid contact ID (should return 404)
+### TEST 11: ERROR HANDLING - GET contact with invalid ID (should return 404)
 GET {{baseUrl}}/contacts/invalid-id-12345
+
+###
+### TEST 12: ERROR HANDLING - DELETE company with assigned contacts (should return 400)
+DELETE {{baseUrl}}/companies/{{companyId}}
+
+###
+### TEST 13: DELETE contact (should return 204)
+DELETE {{baseUrl}}/contacts/{{contactId}}
+
+###
+### TEST 14: VERIFY deletion - GET deleted contact (should return 404)
+GET {{baseUrl}}/contacts/{{contactId}}
