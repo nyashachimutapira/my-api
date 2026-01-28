@@ -42,19 +42,21 @@ app.use((req, res, next) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Passport GitHub strategy configuration
-passport.use(
+// Passport GitHub strategy configuration (only if credentials are provided)
+if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+  passport.use(
     new GitHubStrategy(
-        {
-            clientID: process.env.GITHUB_CLIENT_ID,
-            clientSecret: process.env.GITHUB_CLIENT_SECRET,
-            callbackURL: process.env.GITHUB_CALLBACK_URL || 'http://localhost:3000/auth/github/callback',
-        },
-        (accessToken, refreshToken, profile, done) => {
-            return done(null, profile);
-        }
+      {
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL: process.env.GITHUB_CALLBACK_URL || 'http://localhost:3000/auth/github/callback',
+      },
+      (accessToken, refreshToken, profile, done) => {
+        return done(null, profile);
+      }
     )
-);
+  );
+}
 
 // Serialize user
 passport.serializeUser((user, done) => {
