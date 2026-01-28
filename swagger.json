@@ -10,12 +10,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000",
-      "description": "Development server"
+      "url": "https://my-api-w7ii.onrender.com",
+      "description": "Production server"
     },
     {
-      "url": "https://my-api-w7ii.onrender.com",
-      "description": "Development server (https)"
+      "url": "http://localhost:3000",
+      "description": "Development server"
     }
   ],
   "components": {
