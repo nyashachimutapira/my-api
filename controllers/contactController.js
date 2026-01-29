@@ -88,8 +88,24 @@ exports.updateContact = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(404).json({ error: 'Contact not found' });
     }
+    
+    // Get current contact
+    const currentContact = await Contact.findById(req.params.id);
+    if (!currentContact) {
+      return res.status(404).json({ error: 'Contact not found' });
+    }
+
+    // Check if company is being changed or company exists
     if (req.body.company) {
       await ensureCompany(req.body.company);
+    }
+
+    // If email is being changed, check if it already exists
+    if (req.body.email && req.body.email !== currentContact.email) {
+      const existingContact = await Contact.findOne({ email: req.body.email });
+      if (existingContact) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
     }
 
     const contact = await Contact.findByIdAndUpdate(
@@ -97,10 +113,6 @@ exports.updateContact = async (req, res) => {
       req.body,
       { new: true, runValidators: true },
     );
-
-    if (!contact) {
-      return res.status(404).json({ error: 'Contact not found' });
-    }
 
     res.status(204).send();
   } catch (err) {

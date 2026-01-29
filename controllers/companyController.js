@@ -43,14 +43,26 @@ exports.createCompany = async (req, res) => {
 
 exports.updateCompany = async (req, res) => {
   try {
+    // Get the current company to check if name is being changed
+    const currentCompany = await Company.findById(req.params.id);
+    if (!currentCompany) {
+      return res.status(404).json({ error: 'Company not found' });
+    }
+
+    // If name is being changed, check if it already exists
+    if (req.body.name && req.body.name !== currentCompany.name) {
+      const existingCompany = await Company.findOne({ name: req.body.name });
+      if (existingCompany) {
+        return res.status(400).json({ error: 'Company name already exists' });
+      }
+    }
+
+    // Update the company
     const company = await Company.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true },
     );
-    if (!company) {
-      return res.status(404).json({ error: 'Company not found' });
-    }
     res.status(204).send();
   } catch (err) {
     console.error(err);
