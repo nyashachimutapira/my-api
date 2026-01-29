@@ -4,17 +4,33 @@ const passport = require('passport');
 const router = express.Router();
 
 /**
- * @swagger
- * /auth/github:
- *   get:
- *     tags:
- *       - Auth
- *     summary: Redirect to GitHub for OAuth login
- *     description: Initiates GitHub OAuth flow
- *     responses:
- *       302:
- *         description: Redirect to GitHub login
- */
+  * @swagger
+  * /auth/login:
+  *   get:
+  *     tags:
+  *       - Auth
+  *     summary: Redirect to GitHub OAuth login
+  *     description: Shortcut route that redirects to GitHub OAuth
+  *     responses:
+  *       302:
+  *         description: Redirect to GitHub
+  */
+router.get('/login', (req, res) => {
+  res.redirect('/auth/github');
+});
+
+/**
+  * @swagger
+  * /auth/github:
+  *   get:
+  *     tags:
+  *       - Auth
+  *     summary: Redirect to GitHub for OAuth login
+  *     description: Initiates GitHub OAuth flow
+  *     responses:
+  *       302:
+  *         description: Redirect to GitHub login
+  */
 router.get(
   '/github',
   passport.authenticate('github', { scope: ['user:email'] })
