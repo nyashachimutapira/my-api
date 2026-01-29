@@ -125,6 +125,18 @@ router.get('/me', (req, res) => {
   *         description: Not authenticated
   */
 router.get('/status', (req, res) => {
+  // Check DEMO_MODE first
+  if (process.env.DEMO_MODE === 'true') {
+    return res.json({ 
+      authenticated: true, 
+      user: { 
+        id: 'demo', 
+        username: 'demo-user', 
+        displayName: 'Demo User' 
+      } 
+    });
+  }
+  
   if (req.user) {
     res.json({ authenticated: true, user: req.user });
   } else {
