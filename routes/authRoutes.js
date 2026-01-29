@@ -33,6 +33,16 @@ router.get('/login', (req, res) => {
   */
 router.get(
   '/github',
+  (req, res, next) => {
+    // Check if GitHub OAuth is configured
+    if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
+      return res.status(500).json({ 
+        error: 'GitHub OAuth not configured',
+        message: 'GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment variables are required'
+      });
+    }
+    next();
+  },
   passport.authenticate('github', { scope: ['user:email'] })
 );
 
