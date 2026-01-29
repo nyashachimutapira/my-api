@@ -71,6 +71,15 @@ passport.deserializeUser((user, done) => {
 // Setup Swagger API documentation
 setupSwaggerDocs(app);
 
+// Shortcut routes
+app.get('/login', (req, res) => {
+    res.redirect('/auth/github');
+});
+
+app.get('/logout', (req, res) => {
+    res.redirect('/auth/logout');
+});
+
 // HTML view for displaying contacts
 const contactsHtml = `
     <!DOCTYPE html>
