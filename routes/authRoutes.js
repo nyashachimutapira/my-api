@@ -76,28 +76,54 @@ router.get('/me', (req, res) => {
 });
 
 /**
- * @swagger
- * /auth/logout:
- *   post:
- *     tags:
- *       - Auth
- *     summary: Logout
- *     description: Clears the session cookie
- *     responses:
- *       200:
- *         description: Logged out successfully
- *       401:
- *         description: Not authenticated
- */
-router.post('/logout', (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ error: 'Not authenticated' });
+  * @swagger
+  * /auth/status:
+  *   get:
+  *     tags:
+  *       - Auth
+  *     summary: Get authentication status
+  *     description: Returns current authentication status and user info
+  *     responses:
+  *       200:
+  *         description: Current authentication status
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 authenticated:
+  *                   type: boolean
+  *                 user:
+  *                   type: object
+  *       401:
+  *         description: Not authenticated
+  */
+router.get('/status', (req, res) => {
+  if (req.user) {
+    res.json({ authenticated: true, user: req.user });
+  } else {
+    res.json({ authenticated: false, user: null });
   }
+});
+
+/**
+  * @swagger
+  * /auth/logout:
+  *   get:
+  *     tags:
+  *       - Auth
+  *     summary: Logout
+  *     description: Logs out the user and clears the session
+  *     responses:
+  *       302:
+  *         description: Redirect to home page after logout
+  */
+router.get('/logout', (req, res) => {
   req.logout((err) => {
     if (err) {
       return res.status(500).json({ error: 'Logout failed' });
     }
-    res.json({ message: 'Logged out successfully' });
+    res.redirect('/');
   });
 });
 

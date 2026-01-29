@@ -63,8 +63,6 @@ passport.serializeUser((user, done) => {
     done(null, user);
 });
 
-app.get('/', (req, res) => { res.send(req.session.user == undefined ? 'logged out' : `logged in as ${req.session.user.displayName}`); });
-
 // Deserialize user
 passport.deserializeUser((user, done) => {
     done(null, user);
@@ -134,17 +132,17 @@ const contactsHtml = `
         }
 
         // Check authentication status
-        fetch('/auth/status')
-          .then(r => r.json())
-          .then(data => {
-            const authStatus = document.getElementById('authStatus');
-            if (data.authenticated) {
-              authStatus.innerHTML = 'Logged in as <strong>' + data.user.displayName + '</strong> | <a href="/logout" style="color: #3498db; text-decoration: none;">Logout</a>';
-            } else {
-              authStatus.innerHTML = '<a href="/auth/github" style="color: #3498db; text-decoration: none;">Login with GitHub</a>';
-            }
-          })
-          .catch(err => console.error('Auth status check failed:', err));
+         fetch('/auth/status')
+           .then(r => r.json())
+           .then(data => {
+             const authStatus = document.getElementById('authStatus');
+             if (data.authenticated) {
+               authStatus.innerHTML = 'Logged in as <strong>' + data.user.displayName + '</strong> | <a href="/auth/logout" style="color: #3498db; text-decoration: none;">Logout</a>';
+             } else {
+               authStatus.innerHTML = '<a href="/auth/github" style="color: #3498db; text-decoration: none;">Login with GitHub</a>';
+             }
+           })
+           .catch(err => console.error('Auth status check failed:', err));
 
         fetch('/contacts')
           .then(r => r.json())
