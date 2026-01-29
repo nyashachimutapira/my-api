@@ -1,8 +1,8 @@
-### Contacts & Companies API Testing - Week 03 - CRUD Operations Demo
+### Contacts & Companies API Testing - W04 Project Part 2 (Authentication)
 
-@baseUrl = http://localhost:3000
-@companyId = 6979ea6a08fc06c5c018af78
-@contactId = 6979e54530e0b469f9e3c0f1
+@baseUrl = https://my-api-w7ii.onrender.com
+@companyId = 6926ab80ab6af354d18f212e
+@contactId = 6926ab80ab6af354d18f2131
 
 ###
 ### TEST 1: GET all contacts (should return 200)
