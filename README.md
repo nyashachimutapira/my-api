@@ -1,6 +1,13 @@
-# Contacts & Companies API (Week 03)
+# Contacts & Companies API - W05 Final Project Part 1
 
-Week 03 deliverable for the new CRUD project. The API now manages two MongoDB collections (`contacts` and `companies`), exposes fully documented CRUD routes, validates incoming data, and seeds demo data so the UI/tests never start empty.
+Professional REST API for managing contacts and companies with comprehensive CRUD operations, authentication, validation, and API documentation.
+
+**Status**: ✅ Complete and Ready for Deployment
+
+**Submission**: 
+- GitHub: [https://github.com/nyashachimutapira/my-api](https://github.com/nyashachimutapira/my-api)
+- Render: [https://my-api-w7ii.onrender.com](https://my-api-w7ii.onrender.com)
+- API Docs: [https://my-api-w7ii.onrender.com/api-docs](https://my-api-w7ii.onrender.com/api-docs)
 
 ## Feature Overview
 
@@ -100,3 +107,106 @@ Week 03 deliverable for the new CRUD project. The API now manages two MongoDB co
    - `GITHUB_CALLBACK_URL` (e.g., `https://your-app.onrender.com/auth/github/callback`)
    - `RENDER_URL` (optional)
 4. Deploy & verify `/api-docs`, `/auth/me`, and protected CRUD routes remotely.
+
+---
+
+## W05 Final Project Part 1 - Assignment Completion
+
+### ✅ Requirements Met
+
+#### 1. Two Collections with CRUD
+- **Contacts**: 11 fields (firstName, lastName, email, phone, favoriteColor, birthday, jobTitle, company, street, city, country, notes)
+- **Companies**: 7 fields (name, industry, website, supportEmail, phone, hqCity, description)
+- Full CRUD operations on both collections
+
+#### 2. API Endpoints Implemented
+- **GET** `/contacts` & `/contacts/{id}` - Retrieve contacts
+- **POST** `/contacts` - Create contact (protected)
+- **PUT** `/contacts/{id}` - Update contact (protected)
+- **DELETE** `/contacts/{id}` - Delete contact (protected)
+- **GET** `/companies` & `/companies/{id}` - Retrieve companies
+- **POST** `/companies` - Create company (protected)
+- **PUT** `/companies/{id}` - Update company (protected)
+- **DELETE** `/companies/{id}` - Delete company (protected)
+
+#### 3. Error Handling & Validation
+- ✅ Input validation (required fields, format validation)
+- ✅ Database constraints (unique email, unique company name)
+- ✅ Cascade protection (cannot delete company with contacts)
+- ✅ Proper HTTP status codes:
+  - 200 GET successful
+  - 201 Created
+  - 204 No Content (update/delete)
+  - 400 Bad Request
+  - 401 Unauthorized
+  - 404 Not Found
+  - 500 Server Error
+
+#### 4. API Documentation (Swagger)
+- ✅ Full OpenAPI 3.0.0 specification
+- ✅ All endpoints documented with examples
+- ✅ Request/response schemas
+- ✅ Executable endpoints in Swagger UI
+- ✅ Available at `/api-docs` and deployed on Render
+
+#### 5. Authentication & Security
+- ✅ GitHub OAuth integration
+- ✅ Session-based protection for write operations
+- ✅ Public GET endpoints
+- ✅ Protected POST/PUT/DELETE endpoints
+- ✅ Demo mode for testing
+
+#### 6. Deployment
+- ✅ GitHub repository set up
+- ✅ Rendered on https://my-api-w7ii.onrender.com
+- ✅ API documentation accessible at `/api-docs`
+- ✅ Ready for team collaboration
+
+### Project Documentation
+
+Additional documentation files for your reference:
+- **PROJECT_COMPLETION_SUMMARY.md** - Detailed project status and features
+- **SETUP_GUIDE.md** - How to set up and run the project locally
+- **ARCHITECTURE.md** - System design, data flow, and technical architecture
+- **VIDEO_SUBMISSION_GUIDE.md** - Complete guide for creating the submission video
+
+### Video Submission
+
+When creating your 5-8 minute video for Canvas, ensure you cover:
+1. Overview of the project and collections
+2. Display schemas for both collections
+3. Demonstrate all CRUD operations in Swagger UI
+4. Show error handling examples
+5. Explain API documentation
+6. Mention authentication implementation
+7. Show Render deployment
+
+See `VIDEO_SUBMISSION_GUIDE.md` for detailed instructions and script examples.
+
+---
+
+## Quick Links
+
+| Resource | Link |
+|----------|------|
+| API Documentation | `/api-docs` |
+| Contacts Dashboard | `/` |
+| Companies Dashboard | `/companies` |
+| GitHub Repository | [Link](https://github.com/nyashachimutapira/my-api) |
+| Render Deployment | [Link](https://my-api-w7ii.onrender.com) |
+
+---
+
+## Tech Stack
+
+- **Runtime**: Node.js
+- **Framework**: Express.js 5.x
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: Passport.js with GitHub OAuth
+- **Documentation**: Swagger/OpenAPI 3.0
+- **Session Management**: express-session with MongoDB store
+- **Deployment**: Render
+
+## License
+
+ISC
