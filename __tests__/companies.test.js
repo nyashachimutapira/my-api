@@ -14,6 +14,7 @@ describe('Companies API - GET Endpoints', () => {
       supportEmail: 'support@techcorp.com',
       phone: '+1(555)123-4567',
       hqCity: 'San Francisco',
+      description: 'Test company for company tests',
     });
     companyId = company._id;
   });

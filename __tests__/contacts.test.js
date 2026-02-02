@@ -17,6 +17,7 @@ describe('Contacts API - GET Endpoints', () => {
       supportEmail: 'support@test.com',
       phone: '+1234567890',
       hqCity: 'NYC',
+      description: 'Test company for contacts',
     });
     companyId = company._id;
 
