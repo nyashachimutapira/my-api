@@ -97,6 +97,64 @@ const getSwaggerDocument = () => ({
           message: { type: 'string', description: 'Error message' },
           statusCode: { type: 'integer', description: 'HTTP status code' }
         }
+      },
+      Project: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string', example: '507f1f77bcf86cd799439011', description: 'MongoDB ObjectId' },
+          title: { type: 'string', example: 'Website Redesign', description: 'Project title (unique)' },
+          description: { type: 'string', example: 'Complete redesign of company website', description: 'Project description' },
+          company: { type: 'string', example: '507f1f77bcf86cd799439012', description: 'MongoDB ObjectId of associated company' },
+          status: { type: 'string', enum: ['Planning', 'In Progress', 'Completed', 'On Hold'], example: 'In Progress', description: 'Project status' },
+          startDate: { type: 'string', format: 'date-time', example: '2024-01-15T00:00:00.000Z', description: 'Project start date' },
+          endDate: { type: 'string', format: 'date-time', example: '2024-06-15T00:00:00.000Z', description: 'Project end date' },
+          budget: { type: 'number', example: 50000, description: 'Project budget' },
+          teamLead: { type: 'string', example: '507f1f77bcf86cd799439010', description: 'MongoDB ObjectId of team lead contact' },
+          createdAt: { type: 'string', format: 'date-time', description: 'Project creation timestamp' },
+          updatedAt: { type: 'string', format: 'date-time', description: 'Project last update timestamp' }
+        },
+        required: ['_id', 'title', 'description', 'company', 'startDate', 'budget']
+      },
+      ProjectInput: {
+        type: 'object',
+        properties: {
+          title: { type: 'string', example: 'Website Redesign', description: 'Project title (unique)' },
+          description: { type: 'string', example: 'Complete redesign of company website', description: 'Project description' },
+          company: { type: 'string', example: '507f1f77bcf86cd799439012', description: 'MongoDB ObjectId of associated company (must exist)' },
+          status: { type: 'string', enum: ['Planning', 'In Progress', 'Completed', 'On Hold'], example: 'Planning', description: 'Project status' },
+          startDate: { type: 'string', format: 'date-time', example: '2024-01-15T00:00:00.000Z', description: 'Project start date' },
+          endDate: { type: 'string', format: 'date-time', example: '2024-06-15T00:00:00.000Z', description: 'Project end date' },
+          budget: { type: 'number', example: 50000, description: 'Project budget' },
+          teamLead: { type: 'string', example: '507f1f77bcf86cd799439010', description: 'MongoDB ObjectId of team lead contact' }
+        },
+        required: ['title', 'description', 'company', 'startDate', 'budget']
+      },
+      Review: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string', example: '507f1f77bcf86cd799439011', description: 'MongoDB ObjectId' },
+          title: { type: 'string', example: 'Great Company', description: 'Review title' },
+          content: { type: 'string', example: 'Excellent service and support', description: 'Review content' },
+          rating: { type: 'integer', example: 5, description: 'Rating from 1 to 5' },
+          company: { type: 'string', example: '507f1f77bcf86cd799439012', description: 'MongoDB ObjectId of reviewed company' },
+          reviewer: { type: 'string', example: '507f1f77bcf86cd799439010', description: 'MongoDB ObjectId of reviewer contact' },
+          isPublished: { type: 'boolean', example: true, description: 'Review publication status' },
+          createdAt: { type: 'string', format: 'date-time', description: 'Review creation timestamp' },
+          updatedAt: { type: 'string', format: 'date-time', description: 'Review last update timestamp' }
+        },
+        required: ['_id', 'title', 'content', 'rating', 'company', 'reviewer']
+      },
+      ReviewInput: {
+        type: 'object',
+        properties: {
+          title: { type: 'string', example: 'Great Company', description: 'Review title' },
+          content: { type: 'string', example: 'Excellent service and support', description: 'Review content' },
+          rating: { type: 'integer', example: 5, description: 'Rating from 1 to 5' },
+          company: { type: 'string', example: '507f1f77bcf86cd799439012', description: 'MongoDB ObjectId of reviewed company (must exist)' },
+          reviewer: { type: 'string', example: '507f1f77bcf86cd799439010', description: 'MongoDB ObjectId of reviewer contact (must exist)' },
+          isPublished: { type: 'boolean', example: false, description: 'Review publication status' }
+        },
+        required: ['title', 'content', 'rating', 'company', 'reviewer']
       }
     },
     securitySchemes: {
@@ -271,6 +329,148 @@ const getSwaggerDocument = () => ({
           400: { description: 'Bad request - company has assigned contacts', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
           401: { description: 'Unauthorized - GitHub authentication required', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
           404: { description: 'Company not found', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          500: { description: 'Server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
+        }
+      }
+    },
+    '/projects': {
+      get: {
+        tags: ['Projects'],
+        summary: 'Get all projects',
+        description: 'Retrieve all projects with populated company and team lead information.',
+        responses: {
+          200: { description: 'Successfully retrieved all projects', content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/Project' } } } } },
+          500: { description: 'Server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
+        }
+      },
+      post: {
+        tags: ['Projects'],
+        summary: 'Create a new project',
+        description: 'Create a new project. Requires authentication.',
+        security: [{ githubAuth: [] }],
+        requestBody: {
+          required: true,
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/ProjectInput' } } }
+        },
+        responses: {
+          201: { description: 'Project created successfully', content: { 'application/json': { schema: { type: 'object', properties: { _id: { type: 'string' } } } } } },
+          400: { description: 'Bad request - invalid input or references', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          401: { description: 'Unauthorized - authentication required', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          500: { description: 'Server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
+        }
+      }
+    },
+    '/projects/{id}': {
+      get: {
+        tags: ['Projects'],
+        summary: 'Get project by ID',
+        description: 'Retrieve a single project by their MongoDB ObjectId.',
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'string' }, description: 'MongoDB ObjectId of the project' }],
+        responses: {
+          200: { description: 'Successfully retrieved project', content: { 'application/json': { schema: { $ref: '#/components/schemas/Project' } } } },
+          404: { description: 'Project not found', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          500: { description: 'Server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
+        }
+      },
+      put: {
+        tags: ['Projects'],
+        summary: 'Update a project',
+        description: 'Update an existing project. Requires authentication.',
+        security: [{ githubAuth: [] }],
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'string' }, description: 'MongoDB ObjectId of the project' }],
+        requestBody: {
+          required: true,
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/ProjectInput' } } }
+        },
+        responses: {
+          204: { description: 'Project updated successfully' },
+          400: { description: 'Bad request - invalid input', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          401: { description: 'Unauthorized - authentication required', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          404: { description: 'Project not found', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          500: { description: 'Server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
+        }
+      },
+      delete: {
+        tags: ['Projects'],
+        summary: 'Delete a project',
+        description: 'Delete an existing project. Requires authentication.',
+        security: [{ githubAuth: [] }],
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'string' }, description: 'MongoDB ObjectId of the project' }],
+        responses: {
+          204: { description: 'Project deleted successfully' },
+          401: { description: 'Unauthorized - authentication required', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          404: { description: 'Project not found', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          500: { description: 'Server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
+        }
+      }
+    },
+    '/reviews': {
+      get: {
+        tags: ['Reviews'],
+        summary: 'Get all reviews',
+        description: 'Retrieve all reviews with populated company and reviewer information.',
+        responses: {
+          200: { description: 'Successfully retrieved all reviews', content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/Review' } } } } },
+          500: { description: 'Server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
+        }
+      },
+      post: {
+        tags: ['Reviews'],
+        summary: 'Create a new review',
+        description: 'Create a new review. Requires authentication.',
+        security: [{ githubAuth: [] }],
+        requestBody: {
+          required: true,
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/ReviewInput' } } }
+        },
+        responses: {
+          201: { description: 'Review created successfully', content: { 'application/json': { schema: { type: 'object', properties: { _id: { type: 'string' } } } } } },
+          400: { description: 'Bad request - invalid input or references', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          401: { description: 'Unauthorized - authentication required', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          500: { description: 'Server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
+        }
+      }
+    },
+    '/reviews/{id}': {
+      get: {
+        tags: ['Reviews'],
+        summary: 'Get review by ID',
+        description: 'Retrieve a single review by their MongoDB ObjectId.',
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'string' }, description: 'MongoDB ObjectId of the review' }],
+        responses: {
+          200: { description: 'Successfully retrieved review', content: { 'application/json': { schema: { $ref: '#/components/schemas/Review' } } } },
+          404: { description: 'Review not found', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          500: { description: 'Server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
+        }
+      },
+      put: {
+        tags: ['Reviews'],
+        summary: 'Update a review',
+        description: 'Update an existing review. Requires authentication.',
+        security: [{ githubAuth: [] }],
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'string' }, description: 'MongoDB ObjectId of the review' }],
+        requestBody: {
+          required: true,
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/ReviewInput' } } }
+        },
+        responses: {
+          204: { description: 'Review updated successfully' },
+          400: { description: 'Bad request - invalid input', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          401: { description: 'Unauthorized - authentication required', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          404: { description: 'Review not found', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          500: { description: 'Server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
+        }
+      },
+      delete: {
+        tags: ['Reviews'],
+        summary: 'Delete a review',
+        description: 'Delete an existing review. Requires authentication.',
+        security: [{ githubAuth: [] }],
+        parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'string' }, description: 'MongoDB ObjectId of the review' }],
+        responses: {
+          204: { description: 'Review deleted successfully' },
+          401: { description: 'Unauthorized - authentication required', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
+          404: { description: 'Review not found', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
           500: { description: 'Server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
         }
       }
