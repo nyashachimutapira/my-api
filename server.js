@@ -272,17 +272,14 @@ const companiesHtml = `
     </html>
 `;
 
+// API Routes FIRST (so they take precedence)
+app.use('/', require('./routes'));
+
+// HTML Dashboard Routes LAST (only for root path)
 // Root endpoint - serve contacts HTML view
 app.get('/', (req, res) => {
     res.send(contactsHtml);
 });
-
-// Companies endpoint - serve companies HTML view
-app.get('/companies', (req, res) => {
-    res.send(companiesHtml);
-});
-
-app.use('/', require('./routes'));
 
 
 mongodb.initDb((err) => {
